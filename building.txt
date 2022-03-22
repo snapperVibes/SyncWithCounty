@@ -1,0 +1,2 @@
+export JAVA_HOME=
+export LD_LIBRARY_PATH=/home/qrs/code/JavaStuff/SyncWithCounty/.venv/lib/python3.9/site-packages/jep
