@@ -1,7 +1,7 @@
 import httpx
 from sqlalchemy.future import Connection
 from sqlalchemy import text
-from __init__ import sync2, get_db
+from __init__ import sync2, get_db, PyParcelError
 
 
 def get_parcel_ids(conn: Connection):
@@ -12,9 +12,19 @@ def get_parcel_ids(conn: Connection):
 if __name__ == "__main__":
     with get_db() as db_conn:
         parcel_ids = get_parcel_ids(db_conn)
+        counter = 0
+        skip_to = 0
         with httpx.Client() as web_client:
-            for parcel_id in parcel_ids:
-                sync2(db_conn, web_client, parcel_id)
+            for i, parcel_id in enumerate(parcel_ids):
+                if i < skip_to:
+                    continue
+
+                try:
+                    sync2(db_conn, web_client, parcel_id)
+                except PyParcelError as err:
+                    print(err)
+
+
     # for parcel_id in parcel_ids:
     #     sync(parcel_id)
     # token = get_token()
